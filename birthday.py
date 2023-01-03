@@ -41,5 +41,14 @@ async def on_ready():
         
         # wait an hour before checking again
         await asyncio.sleep(21600)
+        
+        '''
+        # check if it is midnight
+        if today.hour == 0 and today.minute == 0:
+            await check_birthdays()
+        
+        # wait 60 seconds before checking the time again
+        await asyncio.sleep(60)
+        '''
 
 client.run("TOKEN")  # replace TOKEN with your bot's token
