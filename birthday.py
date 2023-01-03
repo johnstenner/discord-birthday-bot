@@ -10,15 +10,23 @@ async def on_message(message):
     if message.content.startswith("!register"):
         # extract the user's birthday from the command
         try:
-            birthday = message.content.split(" ")[1]
-            birthday_date = datetime.strptime(birthday, "%m-%d").date()
+            args = message.content.split(" ")
+            if len(args) == 3 and args[1] == "for":
+                # check if the user has the "Administrator" role
+                if "Administrator" in [r.name for r in message.author.roles]:
+                    user_id = int(args[2][3:-1])  # extract the user ID from the mention
+                    birthday = message.content.split(" ")[3]
+                    birthday_date = datetime.strptime(birthday, "%m-%d").date()
+                    await register_birthday(user_id, birthday_date)
+                else:
+                    await message.channel.send("You do not have permission to register birthdays for other users.")
+            else:
+                birthday = args[1]
+                birthday_date = datetime.strptime(birthday, "%m-%d").date()
+                await register_birthday(message.author.id, birthday_date)
         except (ValueError, IndexError):
             await message.channel.send("Invalid birthday format. Please use MM-DD.")
             return
-        
-        # store the user's ID and birthday in the dictionary
-        birthdays[message.author.id] = birthday_date
-        await message.channel.send("Birthday successfully registered!")
     
 @client.event
 async def on_ready():
